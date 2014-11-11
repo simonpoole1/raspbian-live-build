@@ -1,0 +1,2 @@
+# Packages needed for Raspberry PI
+raspberrypi-bootloader-nokernel rpi-update

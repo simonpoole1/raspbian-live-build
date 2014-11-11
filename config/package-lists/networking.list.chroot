@@ -1,0 +1,7 @@
+# Packages needed to provide basic DHCP-configured IP networking - this is
+# all you ned to be able to pick up an IP address and install other packages
+# with apt-get.
+isc-dhcp-client ifupdown
+
+# Packages that provide basic command-line networking tools (e.g. ifconfig etc)
+net-tools inetutils-ping 

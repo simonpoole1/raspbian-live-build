@@ -1,0 +1,10 @@
+# Temporary/backup files
+*~
+.*.swn
+.*.swo
+.*.swp
+
+/cache/
+/build/
+/*.img
+/*.log

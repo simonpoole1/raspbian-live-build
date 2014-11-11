@@ -1,0 +1,51 @@
+#!/bin/sh  
+
+do_setup_group() {
+    GROUP_NAME=$1
+
+    if grep -q "^${GROUP_NAME}\>" /etc/group ; then
+       echo "I: Group ${GROUP_NAME} already exists in /etc/group"
+    else
+       echo "I: Creating ${GROUP_NAME} in /etc/group"
+       groupadd ${GROUP_NAME}
+    fi
+}
+
+do_setup_user() {
+    USER_NAME=$1
+    GROUP_NAMES=$2
+
+    echo "I: Creating user $USER_NAME"
+    adduser --gecos $USER_NAME --disabled-login $USER_NAME
+
+    echo "I: Setting password for user $USER_NAME"
+    echo "${USER_NAME}:${USER_NAME}" | chpasswd
+
+    echo "I: Adding user $USER_NAME to ($GROUP_NAMES) groups"
+    usermod -a -G $GROUP_NAMES $USER_NAME
+}
+
+#do_setup_sudoers() {
+#    GROUP_NAME=$1
+#
+#    if ! grep -q "^%${GROUP_NAME}\>" /etc/sudoers ; then
+#        echo "# Members of the ${GROUP_NAME} group may gain root privileges" >> /etc/sudoers
+#        echo "%${GROUP_NAME}  ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers
+#    else
+#        sed -i -e "s/^%${GROUP_NAME}\>.*\$/%${GROUP_NAME}	ALL = (ALL) NOPASSWD: ALL/" /etc/sudoers
+#    fi
+#}
+
+GROUPS_TO_ADD=
+GROUPS_TO_ADD="admin adm dialout cdrom plugdev audio dip video"
+GROUPS_TO_JOIN="admin,adm,dialout,cdrom,plugdev,audio,dip,video,sudo"
+for GROUP_TO_ADD in $GROUPS_TO_ADD ; do
+    do_setup_group $GROUP_TO_ADD
+done
+
+USERS_TO_ADD="pi"
+for USER_TO_ADD in $USERS_TO_ADD ; do
+    do_setup_user $USER_TO_ADD $GROUPS_TO_JOIN
+done
+
+#do_setup_sudoers admin
