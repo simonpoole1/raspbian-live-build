@@ -1,33 +1,53 @@
-# rpi-live-build
+# raspbian-live-build
 
-Builds Raspberry PI disk images using debian's live-build tool and the Raspian
-apt repository.  This is for the RACHEL project (http://rachel.worldpossible.org/),
-hence some of the config is currently RACHEL-specific.
+Builds custom Raspbian disk images for the Raspberry PI using Debian's
+live-build tool and the raspian.org/raspberrypi.org APT repositories.
 
-Prerequisites:
+This build process has been tested under Ubuntu 14.04 with live-build 3.0~a57-1
+ (which is the default version available from the Ubuntu 14.04 repository)
+
+## Prerequisites:
 ```sh
-    sudo apt-get install qemu-user-static live-build debootstrap qemu-utils \
-        qemu-system-arm
+sudo apt-get install qemu-user-static qemu-utils qemu-system-arm
+sudo apt-get install live-build debootstrap
 ```
 
+## Build
 To run a build:
 ```sh
-    make clean
-    make
+make dist-clean
+make
+ls -lh pi-minimal.img
 ```
 
-To boot the image in QEMU emulator, you need to download kernel-qemu from
-http://xecdesign.com/downloads/linux-qemu/kernel-qemu .  Then run:
+The image generated is called "pi-minimal.img" and will appear in the same
+folder as the Makefile.  The build can take a while to run (e.g. 30 mins)
+
+## Install
+To install on your SD card
 ```sh
-    qemu-system-arm \
-        -kernel path/to/kernel-qemu \
-        -initrd build/binary/live/initrd.img-* \
-        -cpu arm1176 \
-        -m 256 \
-        -M versatilepb \
-        -no-reboot \
-        -serial stdio \
-        -append "panic=1 root=/dev/sda1 boot=live" \
-        -hda build/binary.img
+sudo apt-get install pv
+pv pi-minimal.img | sudo dd of=/dev/path-to-your-sd-card bs=16M
 ```
+
+## Troubleshooting the build
+
+### File folder in use
+If you get errors during the build along the lines of not being able to unmount
+or remove a folder because it's in use, that's may be because something in your
+system (e.g. udisks, Nautilus etc) has detected the disk-image being built and
+auto-mounted it.
+
+You may be able to fix this by preventing the automounting.  E.g. maybe this
+will help:
+```sh
+sudo cat >/etc/udev/rules.d/99-udisks2.rules <<EOF
+ACTION=="add|change", SUBSYSTEM=="block", KERNEL=="loop*", ENV{UDISKS_IGNORE}="1"
+EOF
+sudo udevadm control --reload
+```
+
+Or you may be able to fix it by adding a sleep into the build wherever it's
+breaking.  E.g. in `/usr/lib/live/build/lb_binary_hdd` add a "sleep 1" before the
+line that says `${LB_ROOT_COMMAND} umount chroot/binary.tmp`.
 
