@@ -24,6 +24,7 @@ config:
 			--bootstrap-flavour minimal \
 			--bootstrap-qemu-arch armhf \
 			--bootstrap-qemu-static /usr/bin/qemu-arm-static \
+			--cache-stages false \
 			--chroot-filesystem squashfs \
 			--compression gzip \
 			--distribution wheezy \
