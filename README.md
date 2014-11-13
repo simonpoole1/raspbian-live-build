@@ -54,18 +54,9 @@ key.
 If you get errors during the build along the lines of not being able to unmount
 or remove a folder because it's in use, that's may be because something in your
 system (e.g. udisks, Nautilus etc) has detected the disk-image being built and
-auto-mounted it.
+has auto-mounted it or is querying its partition table.
 
-You may be able to fix this by preventing the automounting.  E.g. maybe this
-will help:
-```sh
-sudo cat >/etc/udev/rules.d/99-udisks2.rules <<EOF
-ACTION=="add|change", SUBSYSTEM=="block", KERNEL=="loop*", ENV{UDISKS_IGNORE}="1"
-EOF
-sudo udevadm control --reload
-```
-
-Or you may be able to fix it by adding a sleep into the build wherever it's
-breaking.  E.g. in `/usr/lib/live/build/lb_binary_hdd` add a `sleep 1` before the
-line that says `${LB_ROOT_COMMAND} umount chroot/binary.tmp`.
+You may be able to fix this by adding a sleep into the build wherever it's
+breaking.  E.g. in `/usr/lib/live/build/lb_binary_hdd` add a `sleep 1` before
+the line that says `${LB_ROOT_COMMAND} umount chroot/binary.tmp`.
 
