@@ -17,7 +17,7 @@ config:
 			--apt-secure false \
 			--apt-source-archives false \
 			--architectures armhf \
-			--archive-areas 'main firmware' \
+			--archive-areas 'main firmware non-free' \
 			--binary-filesystem fat32 \
 			--binary-images hdd \
 			--bootappend-live "boot=live config hostname=pi username=pi" \
@@ -27,6 +27,8 @@ config:
 			--chroot-filesystem squashfs \
 			--compression gzip \
 			--distribution wheezy \
+			--firmware-binary false \
+			--firmware-chroot false \
 			--gzip-options '-9 --rsyncable' \
 			--hdd-size 512 \
 			--initramfs live-boot \

@@ -1,2 +1,11 @@
 # Packages needed for Raspberry PI
-raspberrypi-bootloader-nokernel rpi-update
+
+# Bootloader/firmware
+raspberrypi-bootloader-nokernel
+
+# WiPi driver (requires non-free repository)
+firmware-ralink
+
+# Tool for updating firmware
+rpi-update
+

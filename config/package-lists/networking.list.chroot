@@ -3,5 +3,8 @@
 # with apt-get.
 isc-dhcp-client ifupdown
 
+# WiFi configuration tools
+wpasupplicant wireless-tools
+
 # Packages that provide basic command-line networking tools (e.g. ifconfig etc)
 net-tools inetutils-ping 

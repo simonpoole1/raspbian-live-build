@@ -1,0 +1,15 @@
+#!/bin/sh
+
+echo "I: Configuring wlan0 interface"
+
+if ! grep -q wlan0 /etc/network/interfaces ; then
+    cat >>/etc/network/interfaces <<EOF
+
+allow-hotplug wlan0
+iface wlan0 inet dhcp
+# wpa-ssid YOUR_WIFI_SSID_HERE
+# wpa-psk YOUR_WIFI_KEY_HERE
+
+EOF
+
+fi 
