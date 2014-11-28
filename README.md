@@ -60,3 +60,39 @@ You may be able to fix this by adding a sleep into the build wherever it's
 breaking.  E.g. in `/usr/lib/live/build/lb_binary_hdd` add a `sleep 1` before
 the line that says `${LB_ROOT_COMMAND} umount chroot/binary.tmp`.
 
+## Running in the QEMU emulator
+
+QEMU lets you test your image in an emulator, to save you having to repeatedly
+burn test images to SD cards.  The currently release version of QEMU (Dec 2014)
+is not able to emulate a Raspberry Pi, but there's a development version of it
+that seems to be mostly working.
+
+To build a version of QEMU that supports the Pi:
+```sh
+# Install build dependencies (this is for Ubuntu - you might need to change it
+# to something appropriate for your system)
+sudo apt-get install git build-essential \
+    libglib2.0-dev libfdt-dev libgtk2.0-dev libvte-dev
+
+# Fetch the head of the "rpi" branch from Torlus' QEMU fork
+git clone --depth 0 -b rpi https://github.com/Torlus/qemu.git qemu-rpi-src
+cd qemu-rpi-src
+
+# Build QEMU. Change --prefix if you want to install to a different location
+./configure --target-list="arm-softmmu arm-linux-user" \
+    --prefix=$HOME/qemu-rpi --enable-gtk
+make -i
+make -i install
+
+# Create the symlink used by raspbian-live-build's qemu-run:
+sudo ln -s $HOME/qemu-rpi/bin/qemu-system-arm /usr/local/bin/qemu-system-pi
+```
+
+To start the emulator with your image, make sure `/usr/local/bin` is in your
+PATH and then from the raspbian-live-build folder run:
+```sh
+./qemu-run
+```
+
+If you want the output to appear in your console instead of in a window, use `qemu-run -c`
+

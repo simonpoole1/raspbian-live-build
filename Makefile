@@ -77,6 +77,12 @@ pi-minimal.img: build/binary.img
 	cp build/binary.img ./pi-minimal-wip.img
 	parted -s pi-minimal-wip.img set 1 lba on
 	mv pi-minimal-wip.img pi-minimal.img
+	rm pi-minimal-initrd.img-*
+	rm pi-minimal-vmlinuz-*
+	for file in build/binary/live/initrd.img-* build/binary/live/vmlinuz-*; do \
+		destfile="pi-minimal-$$(basename "$$file")" ; \
+		cp "$$file" "$$destfile" ; \
+	done
 
 dist-clean:
 	-sudo rm -rf build

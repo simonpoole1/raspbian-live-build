@@ -1,0 +1,55 @@
+#!/bin/sh
+
+cd "$(dirname $0)"
+DIR=$(pwd)
+
+usage() {
+    [ -n "$1" ] && echo $1
+
+    echo <<EOF
+Usage:  $0 <imagefile>
+EOF
+
+    exit 1
+}
+
+CONSOLE=false
+while getopts c OPT ; do
+    case "$OPT" in
+        c)
+            CONSOLE=:
+            ;;
+        *)
+            usage
+            ;;
+    esac
+done
+
+EXTRA_KERNEL_ARGS=
+EXTRA_QEMU_ARGS=
+if $CONSOLE ; then
+    EXTRA_KERNEL_ARGS="${EXTRA_KERNEL_ARGS} console=ttyAMA0,115200"
+    EXTRA_QEMU_ARGS="${EXTRA_QEMU_ARGS} -nographic"
+else
+    EXTRA_QEMU_ARGS="${EXTRA_QEMU_ARGS} -serial stdio"
+fi
+
+KERNEL_HW_ARGS="dma.dmachans=0x7f35 bcm2708_fb.fbwidth=1024 bcm2708_fb.fbheight=768 bcm2708.boardrev=0xf bcm2708.serial=0xcad0eedf smsc95xx.macaddr=B8:27:EB:D0:EE:DF sdhci-bcm2708.emmc_clock_freq=100000000 vc_mem.mem_base=0x1c000000 vc_mem.mem_size=0x20000000  dwc_otg.lpm_enable=0"
+KERNEL_ARGS="boot=live loglevel=8 panic=1 root=/dev/mmcblk0p1 live-media=/dev/mmcblk0p1 elevator=deadline ${KERNEL_HW_ARGS} ${EXTRA_KERNEL_ARGS}"
+KERNEL_VERSION="3.2.0-4-rpi"
+
+qemu-system-pi \
+    -append "$KERNEL_ARGS" \
+    -cpu arm1176 \
+    -device usb-kbd \
+    -device usb-mouse \
+    -initrd "${DIR}/pi-minimal-initrd.img-${KERNEL_VERSION}" \
+    -kernel "${DIR}/pi-minimal-vmlinuz-${KERNEL_VERSION}" \
+    -m 512 \
+    -M raspi \
+    -no-reboot \
+    -sd "${DIR}/pi-minimal.img" \
+    -usb \
+    -usbdevice net \
+    ${EXTRA_QEMU_ARGS}
+
