@@ -65,22 +65,23 @@ the line that says `${LB_ROOT_COMMAND} umount chroot/binary.tmp`.
 QEMU lets you test your image in an emulator, to save you having to repeatedly
 burn test images to SD cards.  The currently release version of QEMU (Dec 2014)
 is not able to emulate a Raspberry Pi, but there's a development version of it
-that seems to be mostly working.
+that's partly working.  Currently networking doesn't work, and the keyboard
+sometimes fails after a short period of use, but if you want to give it a go...
 
 To build a version of QEMU that supports the Pi:
 ```sh
 # Install build dependencies (this is for Ubuntu - you might need to change it
 # to something appropriate for your system)
 sudo apt-get install git build-essential \
-    libglib2.0-dev libfdt-dev libgtk2.0-dev libvte-dev
+    libglib2.0-dev libfdt-dev libgtk2.0-dev libvte-dev libusb-1.0-0-dev
 
 # Fetch the head of the "rpi" branch from Torlus' QEMU fork
 git clone --depth 0 -b rpi https://github.com/Torlus/qemu.git qemu-rpi-src
 cd qemu-rpi-src
 
 # Build QEMU. Change --prefix if you want to install to a different location
-./configure --target-list="arm-softmmu arm-linux-user" \
-    --prefix=$HOME/qemu-rpi --enable-gtk
+./configure --target-list="arm-softmmu,arm-linux-user,armeb-linux-user" \
+    --prefix=$HOME/qemu-rpi --enable-gtk --enable-libusb
 make -i
 make -i install
 
@@ -94,5 +95,6 @@ PATH and then from the raspbian-live-build folder run:
 ./qemu-run
 ```
 
-If you want the output to appear in your console instead of in a window, use `qemu-run -c`
+If you want the output to appear in your console instead of in a window, use
+`qemu-run -c`
 

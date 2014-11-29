@@ -50,6 +50,5 @@ qemu-system-pi \
     -no-reboot \
     -sd "${DIR}/pi-minimal.img" \
     -usb \
-    -usbdevice net \
     ${EXTRA_QEMU_ARGS}
 
