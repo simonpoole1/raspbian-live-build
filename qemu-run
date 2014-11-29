@@ -6,18 +6,27 @@ DIR=$(pwd)
 usage() {
     [ -n "$1" ] && echo $1
 
-    echo <<EOF
-Usage:  $0 <imagefile>
+    cat <<EOF
+Usage:  $0 [<options>]
+
+Options:
+    -c        Non-graphical mode - output to console
+    -s        Drop straight to a shell instead of running init
+
 EOF
 
     exit 1
 }
 
 CONSOLE=false
-while getopts c OPT ; do
+INIT_TO_SHELL=false
+while getopts cs\? OPT ; do
     case "$OPT" in
         c)
             CONSOLE=:
+            ;;
+        s)
+            INIT_TO_SHELL=:
             ;;
         *)
             usage
@@ -32,6 +41,10 @@ if $CONSOLE ; then
     EXTRA_QEMU_ARGS="${EXTRA_QEMU_ARGS} -nographic"
 else
     EXTRA_QEMU_ARGS="${EXTRA_QEMU_ARGS} -serial stdio"
+fi
+
+if $INIT_TO_SHELL ; then
+    EXTRA_KERNEL_ARGS="${EXTRA_KERNEL_ARGS} init=/bin/bash"
 fi
 
 KERNEL_HW_ARGS="dma.dmachans=0x7f35 bcm2708_fb.fbwidth=1024 bcm2708_fb.fbheight=768 bcm2708.boardrev=0xf bcm2708.serial=0xcad0eedf smsc95xx.macaddr=B8:27:EB:D0:EE:DF sdhci-bcm2708.emmc_clock_freq=100000000 vc_mem.mem_base=0x1c000000 vc_mem.mem_size=0x20000000  dwc_otg.lpm_enable=0"
