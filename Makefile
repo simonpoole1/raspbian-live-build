@@ -60,6 +60,10 @@ PI_BUILD_OPTIONS = \
 
 all: config pi-minimal.img
 
+# Build using Docker
+docker:
+	docker build -t raspbian-live-build . && \
+	docker run -t --rm -i --privileged -v $(shell pwd):/raspbian-live-build raspbian-live-build
 
 # RPI requires fat32 for boot partition
 config:
@@ -83,6 +87,7 @@ pi-minimal.img: build/binary.img
 		destfile="pi-minimal-$$(basename "$$file")" ; \
 		cp "$$file" "$$destfile" ; \
 	done
+	[ -f /.dockerinit ] && [ -f pi-minimal.img ] && mv pi-minimal.img /raspbian-live-build/
 
 dist-clean:
 	-sudo rm -rf build
