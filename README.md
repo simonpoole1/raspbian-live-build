@@ -20,6 +20,13 @@ make
 ls -lh pi-minimal.img
 ```
 
+### Building using Docker
+
+You can run the build system in a Docker container running:
+```sh
+make docker
+```
+
 The image generated is called "pi-minimal.img" and will appear in the same
 folder as the Makefile.  The build can take a while to run (e.g. 30 mins)
 
