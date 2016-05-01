@@ -87,7 +87,9 @@ pi-minimal.img: build/binary.img
 		destfile="pi-minimal-$$(basename "$$file")" ; \
 		cp "$$file" "$$destfile" ; \
 	done
-	[ -f /.dockerinit ] && [ -f pi-minimal.img ] && mv pi-minimal.img /raspbian-live-build/
+	if [ -f /.dockerinit -a -f pi-minimal.img ]; then \
+		mv pi-minimal.img /raspbian-live-build/; \
+	fi
 
 dist-clean:
 	-sudo rm -rf build
