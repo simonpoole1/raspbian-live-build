@@ -9,7 +9,7 @@ This build process has been tested under Ubuntu 14.04 with live-build 3.0~a57-1
 ## Prerequisites:
 ```sh
 sudo apt-get install qemu-user-static qemu-utils qemu-system-arm
-sudo apt-get install live-build debootstrap
+sudo apt-get install build-essential live-build debootstrap
 ```
 
 ## Build
@@ -20,15 +20,15 @@ make
 ls -lh pi-minimal.img
 ```
 
+The image generated is called "pi-minimal.img" and will appear in the same
+folder as the Makefile.  The build can take a while to run (e.g. 30 mins)
+
 ### Building using Docker
 
 You can run the build system in a Docker container running:
 ```sh
 make docker
 ```
-
-The image generated is called "pi-minimal.img" and will appear in the same
-folder as the Makefile.  The build can take a while to run (e.g. 30 mins)
 
 ## Install
 To install on your SD card
@@ -70,21 +70,23 @@ the line that says `${LB_ROOT_COMMAND} umount chroot/binary.tmp`.
 ## Running in the QEMU emulator
 
 QEMU lets you test your image in an emulator, to save you having to repeatedly
-burn test images to SD cards.  The currently release version of QEMU (Dec 2014)
-is not able to emulate a Raspberry Pi, but there's a development version of it
-that's partly working.  Currently networking doesn't work, and the keyboard
-sometimes fails after a short period of use, but if you want to give it a go...
+burn test images to SD cards.  Support for RPi images is pretty poor at the
+moment, but you can give it a go.  You'll need to download and build a version
+ of QEMU that supports the Pi.
 
-To build a version of QEMU that supports the Pi:
 ```sh
 # Install build dependencies (this is for Ubuntu - you might need to change it
 # to something appropriate for your system)
 sudo apt-get install git build-essential \
     libglib2.0-dev libfdt-dev libgtk2.0-dev libvte-dev libusb-1.0-0-dev
+```
 
-# Fetch the head of the "rpi" branch from Torlus' QEMU fork
-git clone --depth 0 -b rpi https://github.com/Torlus/qemu.git qemu-rpi-src
+For the original Raspberry Pi, you need Torlus' fork of QEMU
+```sh
+# Fetch the "rpi" branch from Torlus' QEMU fork
+git clone -b rpi https://github.com/Torlus/qemu.git qemu-rpi-src
 cd qemu-rpi-src
+git checkout e496aff
 
 # Build QEMU. Change --prefix if you want to install to a different location
 ./configure --target-list="arm-softmmu,arm-linux-user,armeb-linux-user" \
@@ -96,12 +98,37 @@ make -i install
 sudo ln -s $HOME/qemu-rpi/bin/qemu-system-arm /usr/local/bin/qemu-system-pi
 ```
 
+```
+
+For the Raspberry Pi 2, you need the very latest QEMU source:
+```sh
+# Fetch the latest QEMU src
+git clone --depth 0 -b master https://github.com/qemu/qemu.git qemu-rpi2-src
+cd qemu-rpi2-src
+git submodule update --init dtc
+
+# Build QEMU. Change --prefix if you want to install to a different location
+./configure --target-list="arm-softmmu,arm-linux-user,armeb-linux-user" \
+    --prefix=$HOME/qemu-rpi2 --enable-gtk --enable-libusb
+make -i
+make -i install
+
+# Create the symlink used by raspbian-live-build's qemu-run:
+sudo ln -s $HOME/qemu-rpi2/bin/qemu-system-arm /usr/local/bin/qemu-system-rpi2
+````
+
+Both versions are only partially working.
+
+
 To start the emulator with your image, make sure `/usr/local/bin` is in your
 PATH and then from the raspbian-live-build folder run:
 ```sh
+# For RPi1 emulation:
 ./qemu-run
+
+# For RPi2 emulation:
+./qemu-rpi2
 ```
 
-If you want the output to appear in your console instead of in a window, use
-`qemu-run -c`
+If you want the output to appear in your console instead of in a window, use the `-c` option.
 
