@@ -18,7 +18,7 @@ GENERAL_BUILD_OPTIONS = \
 	--bootstrap-flavour minimal \
 	--cache-stages false \
 	--compression gzip \
-	--distribution wheezy \
+	--distribution jessie \
 	--gzip-options '-9 --rsyncable' \
 	--mode debian \
 	--security false
@@ -50,7 +50,7 @@ PI_BUILD_OPTIONS = \
 	--bootstrap-qemu-static /usr/bin/qemu-arm-static \
 	--firmware-binary false \
 	--firmware-chroot false \
-	--linux-flavours rpi \
+	--linux-flavours "rpi rpi-rpfv rpi2-rpfv" \
 	--mirror-bootstrap "http://archive.raspbian.org/raspbian" \
 	--mirror-binary "http://archive.raspbian.org/raspbian" \
 	--parent-mirror-bootstrap "http://archive.raspbian.org/raspbian" \

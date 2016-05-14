@@ -13,10 +13,10 @@ RACHEL image
 EOF
 
 cat >binary/cmdline.txt <<EOF
-dwc_otg.lpm_enable=0 console=ttyAMA0,115200 kgdboc=ttyAMA0,115200 console=tty1 root=/dev/mmcblk0p1 rootfstype=fat32 elevator=deadline rootwait boot=live live-media=/dev/mmcblk0p1
+earlyprintk dwc_otg.lpm_enable=0 console=ttyAMA0,115200 kgdboc=ttyAMA0,115200 console=tty1 root=/dev/mmcblk0p1 rootfstype=fat32 elevator=deadline rootwait boot=live live-media=/dev/mmcblk0p1
 EOF
 
 cat >binary/config.txt <<EOF
-kernel live/vmlinuz-3.2.0-4-rpi
-initramfs live/initrd.img-3.2.0-4-rpi 0x00800000
+kernel live/vmlinuz-3.18.0-trunk-rpi
+initramfs live/initrd.img-3.18.0-trunk-rpi 0x00800000
 EOF
