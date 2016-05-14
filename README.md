@@ -98,8 +98,6 @@ make -i install
 sudo ln -s $HOME/qemu-rpi/bin/qemu-system-arm /usr/local/bin/qemu-system-pi
 ```
 
-```
-
 For the Raspberry Pi 2, you need the very latest QEMU source:
 ```sh
 # Fetch the latest QEMU src
@@ -115,7 +113,7 @@ make -i install
 
 # Create the symlink used by raspbian-live-build's qemu-run:
 sudo ln -s $HOME/qemu-rpi2/bin/qemu-system-arm /usr/local/bin/qemu-system-rpi2
-````
+```
 
 Both versions are only partially working.
 
